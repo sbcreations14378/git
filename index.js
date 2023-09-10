@@ -7,22 +7,22 @@ app.use(express.urlencoded({extended:false}))
 
 let movies=[
     {
-    id:1,
+    id:"1",
     title:"Nenulocal",
     director:"Thrinadha Rao",
-    released:2017
+    released:"2017"
     },
     {
-    id:2,
+    id:"2",
     title:"Majnu",
     director:"SSR",
-    released:2016
+    released:"2016"
     },
     {
-    id:3,
+    id:"3",
     title:"RRR",
     director:"SSR",
-    released:2022
+    released:"2022"
     }
 ];
 
@@ -40,19 +40,44 @@ app.post('/movies',(req,res)=>{
 
 
 app.get('/movies/:id',(req,res)=>{
-    const id =req.params.id
+    const id =( req.params.id);
 
-    for (let movie of movies){
+    for(let movie of movies){
         if (movie.id===id){
             res.json(movie)
-            return
+            console.log(movie)
+            return;
         }
-        
-            res.status(404).send("Movie Not Found");
-        
     }
+    res.status(404).send("Movie Not Found");
 })
 
+// app.get('/movie/:id',(req,res)=>{
+//     console.log(req.params.id)
+//     const found=movies.some(movie=>movie.title === (req.params.id));
+//     if(found){
+//         console.log(true)
+//         res.json(movies.filter(movie=>movie.title === (req.params.id)))
+
+//     }
+//     else{
+//         console.log("Movie was not Found");
+//         res.status(400).send("Movie was not Found");
+//     }
+// })
+
+
+app.delete('/movies/:id',(req,res)=>{
+    const id = req.params.id;
+
+    movies= movies.filter(movie=>{
+        if (movie.id!==id){
+            return true
+        }
+        return false
+    })
+    res.send("Movies Deleted from The List")
+})
 
 app.listen(port,()=>{
     console.log(`Server Running on Port ${port}`)
