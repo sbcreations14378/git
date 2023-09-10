@@ -12,13 +12,13 @@ const users = [
     },
     {
         id:3,
-        name:"Sai Ajith Kumar",
+        name:"Sai Ajith Kumar D",
         email:"sbcreations14378@gmail.com"
 
     },
     {
         id:4,
-        name:"SAK789",
+        name:"SAK 789",
         email:"sak789@gmail.com"
 
     }
