@@ -4,13 +4,14 @@
   "description": "Learning ExpressJS",
   "main": "index.js",
   "scripts": {
-    "test": "nodemon src/index"
+    "start": "nodemon src/index"
   },
   "author": "DSAK789",
   "license": "MIT",
   "dependencies": {
     "cookie-parser": "^1.4.7",
     "express": "^4.21.1",
+    "express-session": "^1.18.1",
     "express-validator": "^7.2.0"
   },
   "type": "module"

@@ -3,12 +3,25 @@ import { checkSchema,validationResult,matchedData } from "express-validator";
 import { resolveInedxByUserId } from "../utils/middlewares.js";
 import { createUserValidation, getUserFilterValidation } from "../utils/validationSchema.js";
 import { mockUsers } from "../utils/constants.js";
+import session from "express-session";
 const router = Router();
 
 
 router.get("/api/users", checkSchema(getUserFilterValidation), (req, res) => {
   const result = validationResult(req);
   console.log(result);
+
+  
+  console.log(req.session.id);
+
+  req.sessionStore.get(req.session.id,(err,sessionData)=>{
+    if(err){
+      console.log(err)
+    }
+    console.log(sessionData)
+  })
+
+
   const {
     query: { filter, value },
   } = req;
