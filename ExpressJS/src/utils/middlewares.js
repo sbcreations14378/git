@@ -15,3 +15,17 @@ export const resolveInedxByUserId = (req, res, next) => {
   req.findIndex = findIndex;
   next();
 };
+
+export const userAuthentication = (req, res, next) => {
+  const {
+    body: { username, password },
+  } = req;
+
+  const findUser = mockUsers.find((user) => user.username === username);
+
+  if (!findUser) return res.status(401).send({msg:"User Not Exist"});
+  if (findUser.password !== password)
+    return res.status(401).send({msg:"Incorrect Password"});
+  req.session.user = findUser;
+  next();
+};

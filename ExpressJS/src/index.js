@@ -2,7 +2,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import allRoutes from "./routes/index.js";
-import { loggingMiddleWare } from "./utils/middlewares.js";
+import { loggingMiddleWare, userAuthentication } from "./utils/middlewares.js";
 const app = express();
 
 app.use(express.json());
@@ -33,3 +33,44 @@ app.get("/", (req, res) => {
   res.cookie("first", "Hello Test", { maxAge: 60000 * 60 * 24, signed: true });
   res.send("Hi This is ExpressJS Practice");
 });
+
+app.post("/api/auth", userAuthentication, (req, res) => {
+  const {
+    session: { user },
+  } = req;
+  if (user) {
+    console.log(req.session.id);
+    console.log(user);
+    res.status(200).send({ msg: "Login Success" });
+  }
+});
+
+app.get("/api/auth/status", (req, res) => {
+  req.sessionStore.get(req.sessionID, (err, sessionData) => {
+    if (err) console.log(err);
+    console.log(sessionData);
+  });
+
+  return req.session.user
+    ? res.status(200).send(req.session.user)
+    : res.status(401).send({ msg: "Not Authenticated" });
+});
+
+app.post("/api/cart", (req, res) => {
+  if (!req.session.user) return res.sendStatus(401);
+  const { body: item } = req;
+  const { cart } = req.session;
+  if (cart) {
+    cart.push(item);
+  } else {
+    req.session.cart = [item];
+  }
+  res.status(201).send(item);
+});
+
+app.get('/api/cart',(req,res)=>{
+  const { cart } = req.session;
+  if (!req.session.user) return res.sendStatus(401);
+  return res.status(200).send(cart ?? 'No Item(s) in  Cart')
+  
+})
