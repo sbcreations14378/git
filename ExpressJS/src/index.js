@@ -3,10 +3,17 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import passport from "passport";
 import allRoutes from "./routes/index.js";
+import "./strategies/localMGStrategy.js";
 import "./strategies/localStrategy.js";
 import { loggingMiddleWare, userAuthentication } from "./utils/middlewares.js";
+import mongoose from "mongoose";
 
 const app = express();
+
+mongoose
+  .connect("mongodb://localhost/expressjs")
+  .then(() => console.log("MongoDB Connected"))
+  .catch((err) => console.log(err));
 
 app.use(express.json());
 app.use(loggingMiddleWare);
@@ -100,4 +107,26 @@ app.get("/api/cart", (req, res) => {
   const { cart } = req.session;
   if (!req.session.passport) return res.sendStatus(401);
   return res.status(200).send(cart ?? "No Item(s) in  Cart");
+});
+
+app.post("/api/auth/pp/mg/", passport.authenticate("local-mg"), (req, res) => {
+  res.sendStatus(200);
+});
+
+app.get("/api/auth/pp/mg/status", (req, res) => {
+  req.sessionStore.get(req.sessionID, (err, sessionData) => {
+    if (err) console.log(err);
+    // console.log(sessionData);
+  });
+  return req.user
+    ? res.status(200).send(req.user)
+    : res.status(401).send({ msg: "Not Authenticated" });
+});
+
+app.post("/api/auth/pp/mg/logout", (req, res) => {
+  if (!req.user) return res.sendStatus(401);
+  req.logOut((err) => {
+    if (err) return res.sendStatus(400);
+    res.sendStatus(200);
+  });
 });
