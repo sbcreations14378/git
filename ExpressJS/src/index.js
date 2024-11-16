@@ -1,8 +1,11 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import session from "express-session";
+import passport from "passport";
 import allRoutes from "./routes/index.js";
+import "./strategies/localStrategy.js";
 import { loggingMiddleWare, userAuthentication } from "./utils/middlewares.js";
+
 const app = express();
 
 app.use(express.json());
@@ -18,8 +21,33 @@ app.use(
     },
   })
 );
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(allRoutes);
+
+app.post("/api/auth/pp", passport.authenticate("local"), (req, res) => {
+  // console.log(req.session.passport);
+  res.sendStatus(200);
+});
+
+app.get("/api/auth/pp/status", (req, res) => {
+  req.sessionStore.get(req.sessionID, (err, sessionData) => {
+    if (err) console.log(err);
+    console.log(sessionData);
+  });
+  return req.user
+    ? res.status(200).send(req.user)
+    : res.status(401).send({ msg: "Not Authenticated" });
+});
+
+app.post("/api/auth/pp/logout", (req, res) => {
+  if (!req.user) return res.sendStatus(401);
+  req.logOut((err) => {
+    if (err) return res.sendStatus(400);
+    res.sendStatus(200);
+  });
+});
 
 const port = process.env.PORT || 8888;
 
@@ -57,7 +85,7 @@ app.get("/api/auth/status", (req, res) => {
 });
 
 app.post("/api/cart", (req, res) => {
-  if (!req.session.user) return res.sendStatus(401);
+  if (!req.session.passport) return res.sendStatus(401);
   const { body: item } = req;
   const { cart } = req.session;
   if (cart) {
@@ -68,9 +96,8 @@ app.post("/api/cart", (req, res) => {
   res.status(201).send(item);
 });
 
-app.get('/api/cart',(req,res)=>{
+app.get("/api/cart", (req, res) => {
   const { cart } = req.session;
-  if (!req.session.user) return res.sendStatus(401);
-  return res.status(200).send(cart ?? 'No Item(s) in  Cart')
-  
-})
+  if (!req.session.passport) return res.sendStatus(401);
+  return res.status(200).send(cart ?? "No Item(s) in  Cart");
+});
