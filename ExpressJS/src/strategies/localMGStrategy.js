@@ -1,7 +1,7 @@
 import passport from "passport";
 import { Strategy } from "passport-local";
 import { User } from "../mongoose/schemas/users.js";
-
+import { verifyPassword } from "../utils/helper.js";
 
 passport.serializeUser((user,done)=>{
     console.log("In MG serializeUser")
@@ -26,7 +26,7 @@ export default passport.use("local-mg",
     try {
       const findUser = await User.findOne({ username });
       if (!findUser) throw new Error("User not Exist");
-      if (findUser.password !== password)
+      if (!verifyPassword(password,findUser.password))
         throw new Error("Invalid Credentials");
       done(null, findUser);
     } catch (error) {

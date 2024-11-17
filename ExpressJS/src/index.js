@@ -7,6 +7,7 @@ import "./strategies/localMGStrategy.js";
 import "./strategies/localStrategy.js";
 import { loggingMiddleWare, userAuthentication } from "./utils/middlewares.js";
 import mongoose from "mongoose";
+import MongoStore from "connect-mongo";
 
 const app = express();
 
@@ -22,10 +23,13 @@ app.use(
   session({
     secret: "lets learn",
     saveUninitialized: false,
-    resave: false,
+    resave: true,
     cookie: {
       maxAge: 60000 * 60,
     },
+    store: MongoStore.create({
+      client: mongoose.connection.getClient(),
+    }),
   })
 );
 app.use(passport.initialize());
@@ -64,7 +68,7 @@ app.listen(port, () => {
 
 app.get("/", (req, res) => {
   console.log(req.session.id);
-  req.session.visited = true;
+  // req.session.visited = true;
   res.cookie("first", "Hello Test", { maxAge: 60000 * 60 * 24, signed: true });
   res.send("Hi This is ExpressJS Practice");
 });
@@ -116,7 +120,7 @@ app.post("/api/auth/pp/mg/", passport.authenticate("local-mg"), (req, res) => {
 app.get("/api/auth/pp/mg/status", (req, res) => {
   req.sessionStore.get(req.sessionID, (err, sessionData) => {
     if (err) console.log(err);
-    // console.log(sessionData);
+    console.log(req.sessionID);
   });
   return req.user
     ? res.status(200).send(req.user)
