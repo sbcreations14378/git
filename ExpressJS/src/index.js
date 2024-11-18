@@ -62,7 +62,7 @@ app.use(cors());
 //   });
 // });
 
-const port =  8888;
+const port = 8888;
 
 app.listen(port, () => {
   console.log(`Server Ruuning on ${port}`);
