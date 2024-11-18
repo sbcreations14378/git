@@ -1,5 +1,5 @@
 import express from "express";
-import cors from 'cors'
+import cors from "cors";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import passport from "passport";
@@ -11,13 +11,13 @@ import mongoose from "mongoose";
 import MongoStore from "connect-mongo";
 
 const app = express();
-
+const murl = `mongodb+srv://sbcreations:sbcreations@cluster0.ao6t0sl.mongodb.net/expressjs`;
 mongoose
-  .connect("mongodb://localhost/expressjs")
+  .connect(murl)
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.log(err));
 
-app.use(cors)
+app.use(cors());
 app.use(express.json());
 app.use(loggingMiddleWare);
 app.use(cookieParser("practice"));
