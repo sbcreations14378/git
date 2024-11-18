@@ -1,5 +1,5 @@
 import express from "express";
-// import cors from "cors";
+import cors from "cors";
 // import cookieParser from "cookie-parser";
 // import session from "express-session";
 // import passport from "passport";
@@ -17,7 +17,7 @@ const app = express();
 //   .then(() => console.log("MongoDB Connected"))
 //   .catch((err) => console.log(err));
 
-// app.use(cors());
+app.use(cors());
 // app.use(express.json());
 // app.use(loggingMiddleWare);
 // app.use(cookieParser("practice"));
