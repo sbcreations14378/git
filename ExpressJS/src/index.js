@@ -69,7 +69,7 @@ app.listen(port, () => {
 });
 
 app.get("/", (req, res) => {
-  console.log(req.session.id);
+  // console.log(req.session.id);
   // req.session.visited = true;
   res.cookie("first", "Hello Test", { maxAge: 60000 * 60 * 24, signed: true });
   res.send("Hi This is ExpressJS Practice");
